@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/ielts-review.js": {
+      "maxDuration": 30
+    }
+  }
+}
