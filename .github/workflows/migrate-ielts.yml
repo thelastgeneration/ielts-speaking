@@ -1,0 +1,37 @@
+name: Migrate IELTS site
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/migrate-ielts.yml'
+permissions:
+  contents: write
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout new IELTS repository
+        uses: actions/checkout@v4
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          repository: thelastgeneration/grade9-hk
+          path: source-repo
+      - name: Copy all IELTS Speaking files to repository root
+        run: |
+          cp -a source-repo/ielts-speaking-studio/. ./
+          rm -rf source-repo
+          rm -f standalone.html
+      - name: Add Pages marker
+        run: touch .nojekyll
+      - name: Commit migrated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Migrate all IELTS Speaking code and data"
+            git push
+          fi
